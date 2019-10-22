@@ -25,6 +25,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('manage-birthday', function ($user, $birthday) {
+            return $user->id === $birthday->user_id;
+        });
     }
 }

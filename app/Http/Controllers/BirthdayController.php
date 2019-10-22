@@ -31,11 +31,22 @@ class BirthdayController extends Controller
 
     public function update(Birthday $birthday)
     {
+        $this->authorize('manage-birthday', $birthday);
+        $data = $this->validate(request(), [
+            'name' => 'required|min:2',
+            'date' => 'required|date'
+        ]);
 
+        $birthday->update($data);
+
+        return response()->json($birthday);
     }
 
     public function delete(Birthday $birthday)
     {
-        return $birthday->delete();
+        $this->authorize('manage-birthday', $birthday);
+        $birthday->delete();
+
+        return response()->json();
     }
 }
