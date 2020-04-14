@@ -1,0 +1,47 @@
+version: '3.7'
+services:
+  app:
+    build:
+      args:
+        user: birthday-app
+        uid: 1000
+        app_env: '${APP_ENV}'
+      context: ./
+      dockerfile: ./docker/app/Dockerfile
+    working_dir: /var/www/
+    volumes:
+      - './:/var/www'
+    networks:
+      - backend
+  mariadb:
+    build:
+      context: ./docker/mariadb
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - 'MARIADB_VERSION=${MARIADB_VERSION}'
+    volumes:
+      - '${DATA_PATH_HOST}/mariadb:/var/lib/mysql'
+      - './docker/mariadb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d'
+    ports:
+      - '3306:3306'
+    environment:
+      - 'MYSQL_DATABASE=${DB_DATABASE}'
+      - 'MYSQL_USER=${DB_USERNAME}'
+      - 'MYSQL_PASSWORD=${DB_PASSWORD}'
+      - 'MYSQL_ROOT_PASSWORD=${DB_PASSWORD}'
+    networks:
+      - backend
+  nginx:
+    build: ./docker/nginx
+    ports:
+      - '8000:80'
+    volumes:
+      - './:/var/www'
+      - './docker/nginx/conf.d:/etc/nginx/conf.d'
+    networks:
+      - backend
+networks:
+  backend:
+    driver: bridge

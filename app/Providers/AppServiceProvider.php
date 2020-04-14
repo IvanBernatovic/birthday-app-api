@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Birthday;
+use App\Models\Reminder;
+use App\Observers\BirthdayObserver;
+use App\Observers\RemindersObserver;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +30,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Relation::morphMap([
+            1 => Birthday::class,
+        ]);
+
+        Birthday::observe(BirthdayObserver::class);
+        Reminder::observe(RemindersObserver::class);
     }
 }

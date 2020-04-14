@@ -15,12 +15,15 @@ class CreateRemindersTable extends Migration
     {
         Schema::create('reminders', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedInteger('remindable_id');
+            $table->unsignedBigInteger('remindable_id');
             $table->unsignedSmallInteger('remindable_type')->default(1);
-            $table->timestamp('datetime')->nullable();
-            $table->integer('days_before')->nullable();
-            $table->time('at_time')->nullable();
+            $table->unsignedInteger('before_amount')->nullable();
+            $table->unsignedSmallInteger('before_unit')->nullable();
+            $table->timestamp('remind_at')->nullable();
+            $table->softDeletes();
             $table->timestamps();
+
+            $table->index(['remindable_type', 'remindable_id']);
         });
     }
 

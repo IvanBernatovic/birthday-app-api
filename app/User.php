@@ -50,6 +50,9 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    /**
+     * 
+     */
     public function birthdays()
     {
         return $this->hasMany(Birthday::class);

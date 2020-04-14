@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Birthday;
+use Auth;
 use Illuminate\Http\Request;
 
 class BirthdayController extends Controller
 {
     public function index()
-    {
-        $birthdays = auth()
-            ->user()
+    {   
+        $birthdays = Auth::user()
             ->birthdays()
+            ->with('gifts', 'reminders')
             ->get();
 
         return response()->json(['birthdays' => $birthdays]);
@@ -26,7 +27,7 @@ class BirthdayController extends Controller
 
         $birthday = auth()->user()->birthdays()->create($data);
 
-        return response()->json($birthday);
+        return response()->json($birthday->load('gifts', 'reminders')->refresh());
     }
 
     public function update(Birthday $birthday)

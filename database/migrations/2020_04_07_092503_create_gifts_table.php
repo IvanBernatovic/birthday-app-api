@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBirthdaysTable extends Migration
+class CreateGiftsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,15 @@ class CreateBirthdaysTable extends Migration
      */
     public function up()
     {
-        Schema::create('birthdays', function (Blueprint $table) {
+        Schema::create('gifts', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id');
-            $table->string('name');
-            $table->date('date');
-            $table->boolean('muted')->default(false);
-            $table->timestamps();
+            $table->unsignedBigInteger('birthday_id');
+            $table->text('body');
             $table->softDeletes();
+            $table->timestamps();
 
-            $table->foreign('user_id')
-                ->references('id')->on('users')
+            $table->foreign('birthday_id')
+                ->references('id')->on('birthdays')
                 ->onDelete('cascade');
         });
     }
@@ -35,6 +33,6 @@ class CreateBirthdaysTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('birthdays');
+        Schema::dropIfExists('gifts');
     }
 }
