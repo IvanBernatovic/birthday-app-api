@@ -12,6 +12,9 @@ yarn-error.log
 
 # editors
 .idea/
+,vscode
+_ide_helper.php
+.phpstorm.meta.php
 
 # other
 .composer
