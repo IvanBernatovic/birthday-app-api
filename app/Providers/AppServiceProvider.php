@@ -6,6 +6,8 @@ use App\Models\Birthday;
 use App\Models\Reminder;
 use App\Observers\BirthdayObserver;
 use App\Observers\RemindersObserver;
+use App\Observers\UserObserver;
+use App\User;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
@@ -32,8 +34,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             1 => Birthday::class,
+            2 => User::class,
         ]);
 
+        User::observe(UserObserver::class);
         Birthday::observe(BirthdayObserver::class);
         Reminder::observe(RemindersObserver::class);
     }

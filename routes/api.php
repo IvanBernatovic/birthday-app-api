@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -11,10 +9,10 @@ use Illuminate\Http\Request;
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
-*/
+ */
 Route::group([
 
-    'middleware' => 'api'
+    'middleware' => 'api',
 
 ], function ($router) {
 
@@ -24,17 +22,23 @@ Route::group([
     Route::post('refresh', 'AuthController@refresh');
     Route::get('me', 'AuthController@me');
 
-    Route::group(['middleware' => 'auth:api'], function() {
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::patch('me', 'UserController@update')->name('users.update');
+
+        Route::get('reminders', 'ReminderController@index')->name('reminders');
+        Route::post('reminders', 'ReminderController@store')->name('reminders.store');
+        Route::delete('reminders/{reminder}', 'ReminderController@delete')->name('reminders.delete');
+
         Route::get('birthdays', 'BirthdayController@index')->name('birthdays');
         Route::post('birthdays', 'BirthdayController@store')->name('birthdays.store');
         Route::put('birthdays/{birthday}', 'BirthdayController@update')->name('birthdays.update');
         Route::delete('birthdays/{birthday}', 'BirthdayController@delete')->name('birthdays.delete');
 
-        Route::post('/birthdays/{birthday}/gifts', 'BirthdayGiftsController@store');
-        Route::delete('/birthdays/{birthday}/gifts/{gift}', 'BirthdayGiftsController@delete');
+        Route::post('/birthdays/{birthday}/gifts', 'BirthdayGiftsController@store')->name('gifts.store');
+        Route::delete('/birthdays/{birthday}/gifts/{gift}', 'BirthdayGiftsController@delete')->name('gifts.delete');
 
-        Route::post('/birthdays/{birthday}/reminders', 'BirthdayRemindersController@store');
-        Route::delete('/birthdays/{birthday}/reminders/{reminder}', 'BirthdayRemindersController@delete');
+        Route::post('/birthdays/{birthday}/reminders', 'BirthdayRemindersController@store')->name('birthday-reminders.store');
+        Route::delete('/birthdays/{birthday}/reminders/{reminder}', 'BirthdayRemindersController@delete')->name('birthday-reminders.delete');
     });
 
 });

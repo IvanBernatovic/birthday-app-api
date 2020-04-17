@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,7 +16,17 @@ class Birthday extends Model
     protected $dates = ['date'];
 
     /**
-     * Returns collection of birthdays
+     * Returns instance of user
+     *
+     * @return User
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Returns collection of gifts
      *
      * @return Collection
      */
@@ -35,14 +46,13 @@ class Birthday extends Model
     }
 
     /**
-     * Add gifts to the birthday.
+     * Returns collection of global schedules
      *
-     * @param array $gifts
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
-    public function addGifts($tasks)
+    public function global_schedules()
     {
-        return $this->gifts()->createMany($tasks);
+        return $this->hasMany(GlobalSchedule::class);
     }
 
     /**
@@ -60,7 +70,7 @@ class Birthday extends Model
      * Add a reminder to the birthday
      *
      * @param array $body
-     * @return Gift
+     * @return Reminder
      */
     public function addReminder($data)
     {

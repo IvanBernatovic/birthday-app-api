@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class BirthdayController extends Controller
 {
     public function index()
-    {   
+    {
         $birthdays = Auth::user()
             ->birthdays()
             ->with('gifts', 'reminders')
@@ -22,7 +22,7 @@ class BirthdayController extends Controller
     {
         $data = $this->validate(request(), [
             'name' => 'required|min:2',
-            'date' => 'required|date'
+            'date' => 'required|date',
         ]);
 
         $birthday = auth()->user()->birthdays()->create($data);
@@ -35,7 +35,7 @@ class BirthdayController extends Controller
         $this->authorize('manage-birthday', $birthday);
         $data = $this->validate(request(), [
             'name' => 'required|min:2',
-            'date' => 'required|date'
+            'date' => 'required|date',
         ]);
 
         $birthday->update($data);

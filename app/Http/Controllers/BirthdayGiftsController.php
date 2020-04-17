@@ -26,23 +26,6 @@ class BirthdayGiftsController extends Controller
         return response()->json($gift);
     }
 
-    /**
-     * Update the project.
-     *
-     * @param  Birthday $birthday
-     * @param  Gift    $gift
-     * @return \Illuminate\Http\RedirectResponse
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    public function update(Birthday $birthday, Gift $gift)
-    {
-        $this->authorize('manage-birthday', $gift->birthday);
-
-        $gift->update(request()->validate(['body' => 'required']));
-
-        return redirect($birthday->path());
-    }
-
     public function delete(Birthday $birthday, Gift $gift)
     {
         $this->authorize('manage-birthday', $gift->birthday);
