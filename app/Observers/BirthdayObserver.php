@@ -14,8 +14,9 @@ class BirthdayObserver
             return;
         }
 
-        $birthday->load('global_schedules.reminder');
+        $birthday->load('global_schedules.reminder', 'reminders');
 
+        // update global schedule
         if ($birthday->global_schedules->count()) {
             foreach ($birthday->global_schedules as $globalSchedule) {
                 $globalSchedule->reminder->updateBirthdayGlobalSchedule($birthday);
@@ -28,6 +29,10 @@ class BirthdayObserver
             }
         }
 
+        // update individual birthday reminders
+        $birthday->reminders->each(function ($reminder) {
+            $reminder->updateIndividualSchedule();
+        });
     }
 
     public function deleting(Birthday $birthday)

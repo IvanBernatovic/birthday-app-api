@@ -6,10 +6,11 @@ use App\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 
 class Birthday extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, Notifiable;
 
     protected $fillable = ['name', 'date'];
 
@@ -75,5 +76,17 @@ class Birthday extends Model
     public function addReminder($data)
     {
         return $this->reminders()->create($data);
+    }
+
+    /**
+     * Route notifications for the mail channel.
+     *
+     * @param  \Illuminate\Notifications\Notification  $notification
+     * @return array|string
+     */
+    public function routeNotificationForMail($notification)
+    {
+        // Return name and email address...
+        return [$this->user->email => $this->user->name];
     }
 }

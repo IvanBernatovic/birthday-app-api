@@ -30,11 +30,7 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('manage-reminder', function ($user, $reminder) {
-            if ($reminder->remindable_type == 2) {
-                return $user->id == $reminder->remindable_id;
-            }
-
-            return false;
+            return $user->id == $reminder->remindable_id;
         });
     }
 }

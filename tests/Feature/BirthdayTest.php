@@ -4,14 +4,14 @@ namespace Tests\Feature;
 
 use App\Models\Birthday;
 use App\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\AttachJwtToken;
-use Tests\RefreshAndSeedDatabase;
 use Tests\TestCase;
 
 class BirthdayTest extends TestCase
 {
-    use RefreshAndSeedDatabase, AttachJwtToken, WithFaker;
+    use RefreshDatabase, AttachJwtToken, WithFaker;
 
     /**
      * A basic feature test example.

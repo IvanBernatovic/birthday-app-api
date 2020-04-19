@@ -6,12 +6,16 @@ use App\Models\Reminder;
 
 class RemindersObserver
 {
-    public function saved(Reminder $reminder)
+    public function created(Reminder $reminder)
     {
         if ($reminder->isBirthdayReminder()) {
             $reminder->updateIndividualSchedule();
-            return;
-        } else if ($reminder->isGlobalReminder()) {
+        }
+    }
+
+    public function saved(Reminder $reminder)
+    {
+        if ($reminder->isGlobalReminder()) {
             $reminder->updateGlobalSchedules();
         }
     }

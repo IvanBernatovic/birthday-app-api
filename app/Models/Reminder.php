@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Str;
 
 class Reminder extends Model
 {
@@ -13,6 +14,8 @@ class Reminder extends Model
     protected $fillable = ['before_amount', 'before_unit', 'remind_at'];
 
     protected $touches = ['remindable'];
+
+    protected $dates = ['remind_at'];
 
     public function remindable()
     {
@@ -36,7 +39,7 @@ class Reminder extends Model
      */
     public function isBirthdayReminder()
     {
-        return $this->remindable_type === 1;
+        return $this->remindable_type == 1;
     }
 
     /**
@@ -46,22 +49,19 @@ class Reminder extends Model
      */
     public function isGlobalReminder()
     {
-        return $this->remindable_type === 2;
+        return $this->remindable_type == 2;
     }
 
     public function calculateRemindAt($date)
     {
-        $remindAt = null;
+        $remindAt = $remindAt = clone $date;
 
         switch ($this->before_unit) {
             case 1:
-                $remindAt = $date->subDays($this->before_amount);
+                $remindAt = $remindAt->subDays($this->before_amount);
                 break;
             case 2:
-                $remindAt = $date->subWeeks($this->before_amount);
-                break;
-            case 3:
-                $remindAt = $date->subMonths($this->before_amount);
+                $remindAt = $remindAt->subWeeks($this->before_amount);
                 break;
         }
 
@@ -75,9 +75,11 @@ class Reminder extends Model
      */
     public function updateIndividualSchedule()
     {
-        $birthdayDate = $this->remindable->date;
+        $birthdayDate = $this->remindable->date->copy();
 
-        $this->remind_at = $this->calculateRemindAt($birthdayDate);
+        $this->update([
+            'remind_at' => $this->calculateRemindAt($birthdayDate),
+        ]);
     }
 
     /**
@@ -115,5 +117,18 @@ class Reminder extends Model
                 'remind_at' => $this->calculateRemindAt($birthday->date),
             ]);
         }
+    }
+
+    public function getDiffForHumans()
+    {
+        $timeUnit = $this->before_unit == 1 ? 'day' : 'week';
+
+        if ($this->before_amount == 0) {
+            return 'today';
+        }
+
+        $timeUnit = Str::plural($timeUnit, $this->before_amount);
+
+        return "in {$this->before_amount} {$timeUnit}";
     }
 }

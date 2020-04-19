@@ -45,6 +45,13 @@ class UserTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function testUserHasToBeLoggedInForProtectedRoute()
+    {
+        $this->patch(route('users.update', [], false), [
+            'name' => 'Test Name',
+        ])->assertStatus(401);
+    }
+
     public function testUserCanRefreshToken()
     {
         $user = factory(User::class)->create();
