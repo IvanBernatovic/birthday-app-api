@@ -12,17 +12,19 @@ fi
 
 if [ "$role" = "app" ]; then
 
-    exec apache2-foreground
+    exec php-fpm
 
 elif [ "$role" = "queue" ]; then
 
-    echo "Queue role"
-    exit 1
+    php /var/www/artisan queue:work
 
 elif [ "$role" = "scheduler" ]; then
 
-    echo "Scheduler role"
-    exit 1
+    while [ true ]
+    do
+      php /var/www/artisan schedule:run --verbose --no-interaction &
+      sleep 60
+    done
 
 else
     echo "Could not match the container role \"$role\""

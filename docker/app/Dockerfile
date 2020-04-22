@@ -41,6 +41,10 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd soap
 RUN docker-php-ext-configure opcache --enable-opcache \
     && docker-php-ext-install opcache
 
+RUN pecl install -o -f redis \
+    &&  rm -rf /tmp/pear \
+    &&  docker-php-ext-enable redis
+
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -50,11 +54,12 @@ RUN useradd -G www-data,root -u $uid -d /home/$user $user && \
 RUN mkdir -p /home/$user/.composer && \
     chown -R $user:$user /home/$user
 
-#COPY start.sh /usr/local/bin/start
-#RUN chmod u+x /usr/local/bin/start
+COPY docker/app/start.sh /usr/local/bin/start
+RUN chmod u+x /usr/local/bin/start
 
 # Set working directory
 WORKDIR /var/www
 
 USER $user
-#CMD ["/usr/local/bin/start"]
+
+CMD ["bash", "/usr/local/bin/start"]

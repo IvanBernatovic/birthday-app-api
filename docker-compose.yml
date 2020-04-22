@@ -1,18 +1,20 @@
-version: '3.7'
+version: "3.7"
 services:
   app:
     build:
       args:
         user: birthday-app
         uid: 1000
-        app_env: '${APP_ENV}'
+        app_env: "${APP_ENV}"
       context: ./
       dockerfile: ./docker/app/Dockerfile
     working_dir: /var/www/
+    environment:
+      APP_ENV: "${APP_ENV}"
+      CONTAINER_ROLE: app
     volumes:
-      - './:/var/www'
-    networks:
-      - backend
+      - "./:/var/www"
+
   mariadb:
     build:
       context: ./docker/mariadb
@@ -20,28 +22,66 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-        - 'MARIADB_VERSION=${MARIADB_VERSION}'
     volumes:
-      - '${DATA_PATH_HOST}/mariadb:/var/lib/mysql'
-      - './docker/mariadb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d'
+      - "${DATA_PATH_HOST}/mariadb:/var/lib/mysql"
+      - "./docker/mariadb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d"
     ports:
-      - '3306:3306'
+      - "3306:3306"
     environment:
-      - 'MYSQL_DATABASE=${DB_DATABASE}'
-      - 'MYSQL_USER=${DB_USERNAME}'
-      - 'MYSQL_PASSWORD=${DB_PASSWORD}'
-      - 'MYSQL_ROOT_PASSWORD=${DB_PASSWORD}'
-    networks:
-      - backend
+      - "MYSQL_DATABASE=${DB_DATABASE}"
+      - "MYSQL_USER=${DB_USERNAME}"
+      - "MYSQL_PASSWORD=${DB_PASSWORD}"
+      - "MYSQL_ROOT_PASSWORD=${DB_PASSWORD}"
+
   nginx:
     build: ./docker/nginx
     ports:
-      - '8000:80'
+      - "8000:80"
     volumes:
-      - './:/var/www'
-      - './docker/nginx/conf.d:/etc/nginx/conf.d'
-    networks:
-      - backend
-networks:
-  backend:
-    driver: bridge
+      - "./:/var/www"
+      - "./docker/nginx/conf.d:/etc/nginx/conf.d"
+
+  scheduler:
+    build:
+      args:
+        user: birthday-app
+        uid: 1000
+        app_env: "${APP_ENV}"
+      context: ./
+      dockerfile: ./docker/app/Dockerfile
+    working_dir: /var/www/
+    restart: unless-stopped
+    environment:
+      APP_ENV: "${APP_ENV}"
+      CONTAINER_ROLE: scheduler
+    depends_on:
+      - app
+    volumes:
+      - "./:/var/www"
+
+  queue:
+    build:
+      args:
+        user: birthday-app
+        uid: 1000
+        app_env: "${APP_ENV}"
+      context: ./
+      dockerfile: ./docker/app/Dockerfile
+    working_dir: /var/www/
+    environment:
+      APP_ENV: "${APP_ENV}"
+      CONTAINER_ROLE: queue
+    depends_on:
+      - app
+    volumes:
+      - "./:/var/www"
+
+  redis:
+    container_name: birthday-redis
+    image: redis:5-alpine
+    volumes:
+      - birthday_redis_vol:/data
+
+volumes:
+  birthday_redis_vol:
+    driver: "local"

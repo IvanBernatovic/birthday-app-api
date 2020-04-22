@@ -90,7 +90,7 @@ class UserTest extends TestCase
             'password' => 'password',
         ]);
 
-        $response->assertStatus(401);
+        $response->assertStatus(302);
     }
 
     public function testUserCanUpdateHisData()
