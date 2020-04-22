@@ -17,7 +17,7 @@ class CreateGlobalSchedulesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('reminder_id');
             $table->unsignedBigInteger('birthday_id');
-            $table->timestamp('remind_at')->nullable();
+            $table->dateTime('remind_at')->index()->nullable();
             $table->softDeletes();
             $table->timestamps();
 

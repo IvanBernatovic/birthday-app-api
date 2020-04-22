@@ -14,7 +14,7 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        \DB::table('users')->insert([
+        User::create([
             'name' => 'Ivan Bernatović',
             'email' => 'ivan.bernatovic.93@gmail.com',
             'password' => bcrypt('password'),
@@ -22,7 +22,9 @@ class UsersTableSeeder extends Seeder
             'remember_token' => Str::random(10),
         ]);
 
-        factory(User::class, 5)->create()->each(function ($user) {
+        factory(User::class, 5)->create();
+
+        foreach (User::all() as $user) {
             factory(Birthday::class, random_int(4, 16))->create([
                 'user_id' => $user->id,
             ]);
@@ -32,6 +34,6 @@ class UsersTableSeeder extends Seeder
                     'birthday_id' => $birthday->id,
                 ]);
             });
-        });
+        }
     }
 }

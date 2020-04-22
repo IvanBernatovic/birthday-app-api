@@ -54,7 +54,7 @@ class Reminder extends Model
 
     public function calculateRemindAt($date)
     {
-        $remindAt = $remindAt = clone $date;
+        $remindAt = $remindAt = $date->copy();
 
         switch ($this->before_unit) {
             case 1:

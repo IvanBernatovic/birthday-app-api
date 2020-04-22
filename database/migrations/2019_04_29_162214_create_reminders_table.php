@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateRemindersTable extends Migration
 {
@@ -19,7 +19,7 @@ class CreateRemindersTable extends Migration
             $table->unsignedSmallInteger('remindable_type')->default(1);
             $table->unsignedInteger('before_amount')->nullable();
             $table->unsignedSmallInteger('before_unit')->nullable();
-            $table->timestamp('remind_at')->nullable();
+            $table->dateTime('remind_at')->index()->nullable();
             $table->softDeletes();
             $table->timestamps();
 
