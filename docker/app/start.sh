@@ -5,6 +5,9 @@ set -e
 role=${CONTAINER_ROLE:-app}
 env=${APP_ENV:-production}
 
+echo "Installing dependencies if needed..."
+composer --quiet install
+
 if [ "$env" != "local" ]; then
     echo "Caching configuration..."
     (cd /var/www && php artisan config:cache && php artisan route:cache && php artisan view:cache)
