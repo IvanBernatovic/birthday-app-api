@@ -45,6 +45,19 @@ class UserTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function testUserCanSignInWithToken()
+    {
+        $user = factory(User::class)->create();
+
+        $token = auth()->fromUser($user);
+
+        $response = $this->post('api/login', [
+            'token' => $token,
+        ]);
+
+        $response->assertStatus(200);
+    }
+
     public function testUserHasToBeLoggedInForProtectedRoute()
     {
         $this->patch(route('users.update', [], false), [
@@ -85,12 +98,14 @@ class UserTest extends TestCase
 
     public function testUserCanGetUnauthorized()
     {
+        $user = factory(User::class)->create();
+
         $response = $this->post('api/login', [
-            'email' => 'doesnt_exist@test.com',
-            'password' => 'password',
+            'email' => $user->email,
+            'password' => 'incorrect password',
         ]);
 
-        $response->assertStatus(302);
+        $response->assertStatus(401);
     }
 
     public function testUserCanUpdateHisData()

@@ -29,6 +29,15 @@ class RemindOfBirthdayTest extends TestCase
         Queue::assertPushed(CheckBirthdayReminders::class);
     }
 
+    public function testCheckBirthdayRemindersJobCanBePushed()
+    {
+        Queue::fake();
+
+        $this->artisan('run:check-birthday-reminders');
+
+        Queue::assertPushed(CheckBirthdayReminders::class);
+    }
+
     public function testUserIsNotifiedOnBirthday()
     {
         $user = factory(User::class)->create();
@@ -40,8 +49,10 @@ class RemindOfBirthdayTest extends TestCase
         Carbon::setTestNow($birthday->date);
 
         Notification::fake();
+
         Notification::assertNothingSent();
-        $this->artisan('run:check-birthday-reminders');
+
+        CheckBirthdayReminders::dispatchNow();
 
         Notification::assertSentTo(
             $birthday, RemindOfBirthday::class, function ($notification) use ($birthday) {
@@ -64,7 +75,8 @@ class RemindOfBirthdayTest extends TestCase
 
         Notification::fake();
         Notification::assertNothingSent();
-        $this->artisan('run:check-birthday-reminders');
+
+        CheckBirthdayReminders::dispatchNow();
 
         Notification::assertSentTo(
             $reminder->remindable, RemindOfBirthday::class
@@ -87,7 +99,8 @@ class RemindOfBirthdayTest extends TestCase
 
         Notification::fake();
         Notification::assertNothingSent();
-        $this->artisan('run:check-birthday-reminders');
+
+        CheckBirthdayReminders::dispatchNow();
 
         Notification::assertSentTo(
             $birthday, RemindOfBirthday::class, function ($notification) use ($birthday) {

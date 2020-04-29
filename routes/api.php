@@ -16,6 +16,8 @@ Route::post('register', 'AuthController@register');
 Route::post('logout', 'AuthController@logout');
 Route::post('refresh', 'AuthController@refresh');
 Route::get('me', 'AuthController@me');
+Route::get('auth/login/{service}', 'Auth\SocialLoginController@redirect')->name('social-login');
+Route::get('auth/login/{service}/callback', 'Auth\SocialLoginController@callback')->name('social-login.callback');
 
 Route::group(['middleware' => 'jwt.auth'], function () {
     Route::patch('me', 'UserController@update')->name('users.update');

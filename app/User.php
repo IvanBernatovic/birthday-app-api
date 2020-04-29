@@ -4,6 +4,7 @@ namespace App;
 
 use App\Models\Birthday;
 use App\Models\Reminder;
+use App\Models\SocialLogin;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
@@ -19,7 +20,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'email_verified_at'
+        'name', 'email', 'password', 'email_verified_at',
     ];
 
     /**
@@ -80,6 +81,16 @@ class User extends Authenticatable implements JWTSubject
     public function addReminder($data)
     {
         return $this->reminders()->create($data);
+    }
+
+    public function social_login()
+    {
+        return $this->hasMany(SocialLogin::class);
+    }
+
+    public function hasSocialLinked($service)
+    {
+        return (bool) $this->social_login->where('service', $service)->count();
     }
 
 }
